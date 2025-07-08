@@ -5,7 +5,7 @@ import {
   faShoppingBasket,
 } from "@fortawesome/free-solid-svg-icons";
 
-const Header = () => {
+export default function Header() {
   return (
     <header className="header">
       <div className="container">
@@ -45,6 +45,6 @@ const Header = () => {
       </div>
     </header>
   );
-};
+}
 
-export default Header;
+// export default Header;
