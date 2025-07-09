@@ -1,4 +1,6 @@
 import PageHeading from "./PageHeading";
+import ProductListing from "./product/ProductListing";
+import products from "../data/products.js";
 
 export default function Home() {
     return (
@@ -8,6 +10,7 @@ export default function Home() {
                 Whether you're looking to personalize your laptop, decorate your room, or find the perfect gift, we have it.
                 Browse our collection and let your imagination run wild!
             </PageHeading>
+            <ProductListing products={products} />
         </div>
     );
 }
