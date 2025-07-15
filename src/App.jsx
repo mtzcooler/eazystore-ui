@@ -1,6 +1,5 @@
 import "./App.css";
 import Header from "./components/Header";
-import ClassHeader from "./components/ClassHeader";
 import Footer from "./components/Footer";
 import Home from "./components/Home";
 
