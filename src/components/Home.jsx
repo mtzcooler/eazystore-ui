@@ -1,8 +1,20 @@
 import PageHeading from "./PageHeading";
 import ProductListing from "./product/ProductListing";
-import products from "../data/products.js";
+import apiClient from "../api/apiClient.js";
+import { useEffect, useState } from "react";
 
 export default function Home() {
+    const [products, setProducts] = useState([]);
+
+    useEffect(() => {
+        fetchProducts();
+    }, []);
+
+    async function fetchProducts() {
+        const response = await apiClient.get("/products");
+        setProducts(response.data);
+    };
+
     return (
         <div className="max-w-[1152px] mx-auto px-6 py-8">
             <PageHeading title="Explore Eazy Stickers!">
