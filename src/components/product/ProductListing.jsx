@@ -7,9 +7,14 @@ const sortList = ["Popularity", "Price: Low to High", "Price: High to Low"];
 
 export default function ProductListing({ products }) {
   const [searchText, setSearchText] = useState("");
+  const [sortOption, setSortOption] = useState("Popularity");
 
   function handleSearchChange(value) {
     setSearchText(value);
+  }
+
+  function handleSortChange(value) {
+    setSortOption(value);
   }
 
   let filteredSortedProducts = Array.isArray(products)
@@ -18,6 +23,19 @@ export default function ProductListing({ products }) {
         product.description.toLowerCase().includes(searchText.toLowerCase())
       )
     : [];
+
+  switch (sortOption) {
+    case "Price: Low to High":
+      filteredSortedProducts.sort((a, b) => a.price - b.price);
+      break;
+    case "Price: High to Low":
+      filteredSortedProducts.sort((a, b) => b.price - a.price);
+      break;
+    case "Popularity":
+    default:
+      filteredSortedProducts.sort((a, b) => b.popularity - a.popularity);
+      break;
+  }
 
   return (
     <div className="max-w-[1152px] mx-auto">
@@ -31,7 +49,8 @@ export default function ProductListing({ products }) {
         <Dropdown
           label="Sort by"
           options={sortList}
-          selectedValue="Popularity"
+          selectedValue={sortOption}
+          handleSort={(value) => handleSortChange(value)}
         />
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-y-8 gap-x-6 py-12">
