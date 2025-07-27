@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import ProductCard from "./ProductCard";
 import SearchBox from "../SearchBox";
 import Dropdown from "../Dropdown";
@@ -17,25 +17,29 @@ export default function ProductListing({ products }) {
     setSortOption(value);
   }
 
-  let filteredSortedProducts = Array.isArray(products)
-    ? products.filter((product) =>
+  const filteredSortedProducts = useMemo(() => {
+    if (!Array.isArray(products)) {
+      return [];
+    }
+
+    let filteredProducts = products.filter(
+      (product) =>
         product.name.toLowerCase().includes(searchText.toLowerCase()) ||
         product.description.toLowerCase().includes(searchText.toLowerCase())
-      )
-    : [];
+    );
 
-  switch (sortOption) {
-    case "Price: Low to High":
-      filteredSortedProducts.sort((a, b) => a.price - b.price);
-      break;
-    case "Price: High to Low":
-      filteredSortedProducts.sort((a, b) => b.price - a.price);
-      break;
-    case "Popularity":
-    default:
-      filteredSortedProducts.sort((a, b) => b.popularity - a.popularity);
-      break;
-  }
+    return filteredProducts.slice().sort((a, b) => {
+      switch (sortOption) {
+        case "Price: Low to High":
+          return parseFloat(a.price) - parseFloat(b.price);
+        case "Price: High to Low":
+          return parseFloat(b.price) - parseFloat(a.price);
+        case "Popularity":
+        default:
+          return parseInt(b.popularity) - parseInt(a.popularity);
+      }
+    });
+  }, [products, searchText, sortOption]);
 
   return (
     <div className="max-w-[1152px] mx-auto">
