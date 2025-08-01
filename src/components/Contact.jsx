@@ -1,7 +1,13 @@
 import React from "react";
 import PageTitle from "./PageTitle";
 import { useRef, useEffect } from "react";
-import { Form, useActionData, useNavigation, redirect } from "react-router-dom";
+import {
+  Form,
+  useActionData,
+  useNavigation,
+  redirect,
+  useSubmit,
+} from "react-router-dom";
 import { toast } from "react-toastify";
 import apiClient from "../api/apiClient";
 
@@ -9,6 +15,8 @@ export default function Contact() {
   const actionData = useActionData();
   const formRef = useRef(null);
   const navigation = useNavigation();
+  const submit = useSubmit();
+
   const isSubmitting = navigation.state === "submitting";
 
   useEffect(() => {
@@ -17,6 +25,20 @@ export default function Contact() {
       toast.success("Your message has been submitted successfully!");
     }
   }, [actionData]);
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    const userConfirmed = window.confirm(
+      "Are you sure you want to submit the form?"
+    );
+
+    if (userConfirmed) {
+      const formData = new FormData(formRef.current); // Get form data
+      submit(formData, { method: "post" }); // Proceed with form submission
+    } else {
+      toast.info("Form submission cancelled.");
+    }
+  };
 
   const labelStyle =
     "block text-lg font-semibold text-primary dark:text-light mt-2 mb-2";
@@ -33,7 +55,7 @@ export default function Contact() {
       </p>
 
       {/* Contact Form */}
-      <Form method="POST" ref={formRef}>
+      <Form method="POST" ref={formRef} onSubmit={handleSubmit}>
         {/* Name Field */}
         <div>
           <label htmlFor="name" className={labelStyle}>
