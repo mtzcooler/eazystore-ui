@@ -10,6 +10,7 @@ import About from "./components/About.jsx";
 import Contact from "./components/Contact.jsx";
 import Login from "./components/Login.jsx";
 import Cart from "./components/Cart.jsx";
+import ProductDetail from "./components/product/ProductDetail.jsx";
 import {
   createRoutesFromElements,
   Route,
@@ -27,6 +28,7 @@ const routeDefinitions = createRoutesFromElements(
     <Route path="/contact" element={<Contact />} action={contactAction} />
     <Route path="/login" element={<Login />} />
     <Route path="/cart" element={<Cart />} />
+    <Route path="/products/:productId" element={<ProductDetail />} />
   </Route>
 );
 
