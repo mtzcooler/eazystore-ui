@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -8,11 +8,14 @@ import {
   faSun,
   faMoon,
 } from "@fortawesome/free-solid-svg-icons";
+import { CartContext } from "../store/cart-context";
 
 export default function Header() {
   const [theme, setTheme] = useState(() => {
     return localStorage.getItem("theme") === "dark" ? "dark" : "light";
   });
+
+  const { totalQuantity } = useContext(CartContext);
 
   useEffect(() => {
     if (theme === "dark") {
@@ -32,7 +35,7 @@ export default function Header() {
 
   const navLinkClass =
     "text-center text-lg font-primary font-semibold text-primary py-2 dark:text-light hover:text-dark dark:hover:text-lighter";
-  const navLinkIconClass = "text-primary py-2 dark:text-light";
+  const navLinkIconClass = "relative text-primary py-2 dark:text-light";
   return (
     <header className="border-b border-gray-300 dark:border-gray-600 sticky top-0 z-20 bg-normalbg dark:bg-darkbg">
       <div className="flex items-center justify-between mx-auto max-w-[1152px] px-6 py-4">
@@ -91,9 +94,15 @@ export default function Header() {
             </li>
             <li>
               <NavLink to="/cart" className={({ isActive }) =>
-                  isActive ? `fa-lg ${navLinkIconClass}` : navLinkIconClass
+                  isActive ? ` fa-lg ${navLinkIconClass}` : navLinkIconClass
                 }>
-                <FontAwesomeIcon icon={faShoppingBasket} />
+                <FontAwesomeIcon
+                  icon={faShoppingBasket}
+                  className="text-primary dark:text-light w-6"
+                />
+                <div className="absolute -top-2 -right-6 text-xs bg-yellow-400 text-black font-semibold rounded-full px-2 py-1 leading-none">
+                  {totalQuantity}
+                </div>
               </NavLink>
             </li>
           </ul>

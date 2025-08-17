@@ -19,6 +19,7 @@ import {
 } from "react-router-dom";
 import { productsLoader } from "./components/Home.jsx";
 import { contactAction } from "./components/Contact.jsx";
+import { CartContext } from "./store/cart-context.jsx";
 
 const routeDefinitions = createRoutesFromElements(
   <Route path="/" element={<App />} errorElement={<ErrorPage />}>
@@ -34,9 +35,19 @@ const routeDefinitions = createRoutesFromElements(
 
 const appRouter = createBrowserRouter(routeDefinitions);
 
+const initialCartContext = {
+  cart: [],
+  totalQuantity: 0,
+  setCart: () => {},
+  addProduct: () => {console.log("Product added to cart")},
+  removeProduct: () => {},
+}
+
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <RouterProvider router={appRouter} />
+    <CartContext value={initialCartContext}>
+      <RouterProvider router={appRouter} />
+    </CartContext>
     <ToastContainer
       position="top-right"
       autoClose={3000}
