@@ -1,10 +1,10 @@
-import React, { useContext } from "react";
+import React from "react";
 import Price from "./Price";
 import { Link } from "react-router-dom";
-import { CartContext } from "../../store/cart-context";
+import { useCart } from "../../store/cart-context";
 
 export default function ProductCard({ product }) {
-  const { addProduct } = useContext(CartContext);
+  const { addProduct } = useCart();
 
   return (
     <div className="w-72 rounded-md mx-auto border border-gray-300 dark:border-gray-600 shadow-md overflow-hidden flex flex-col bg-white dark:bg-gray-800 hover:border-primary dark:hover:border-lighter transition">
@@ -33,7 +33,7 @@ export default function ProductCard({ product }) {
         </div>
         <button
           className="bg-primary dark:bg-light text-white dark:text-primary font-medium text-sm py-2 px-4 rounded-md hover:cursor-pointer"
-          onClick={() => addProduct()}
+          onClick={() => addProduct(product, 1)}
         >
           Add to Cart
         </button>
