@@ -6,6 +6,7 @@ import {
   faShoppingBasket,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Price from "./Price";
 import { useCart } from "../../store/cart-context";
 
 export default function ProductDetail() {
@@ -82,7 +83,7 @@ export default function ProductDetail() {
               {product.description}
             </p>
             <div className="text-2xl font-bold text-primary dark:text-light">
-              ${product.price}
+              <Price currency={"R$"} price={product.price} />
             </div>
           </div>
 
