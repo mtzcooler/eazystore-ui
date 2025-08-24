@@ -1,39 +1,17 @@
-import {
-  createContext,
-  useState,
-  useEffect,
-  useContext,
-  useReducer,
-} from "react";
+import { createContext, useEffect, useContext, useReducer } from "react";
 
 export const CartContext = createContext();
 
 export const useCart = () => useContext(CartContext);
 
-export const CartProvider = ({ children }) => {
-  // Initialize cart state from localStorage or as an empty array
-  const [cart, setCart] = useState(() => {
-    try {
-      const storedCart = localStorage.getItem("cart");
-      return storedCart ? JSON.parse(storedCart) : [];
-    } catch (error) {
-      console.error("Failed to parse cart from localStorage:", error);
-      return [];
-    }
-  });
+const ADD_TO_CART = "ADD_TO_CART";
+const REMOVE_FROM_CART = "REMOVE_FROM_CART";
+const CLEAR_CART = "CLEAR_CART";
 
-  // Save cart to localStorage whenever it changes
-  useEffect(() => {
-    try {
-      localStorage.setItem("cart", JSON.stringify(cart));
-    } catch (error) {
-      console.error("Failed to save cart to localStorage:", error);
-    }
-  }, [cart]);
-
-  // Add product to the cart
-  const addProduct = (product, quantity) => {
-    setCart((prevCart) => {
+const cartReducer = (prevCart, action) => {
+  switch (action.type) {
+    case ADD_TO_CART:
+      const { product, quantity } = action.payload;
       const existingItem = prevCart.find(
         (item) => item.productId === product.productId
       );
@@ -46,21 +24,58 @@ export const CartProvider = ({ children }) => {
         );
       }
       return [...prevCart, { ...product, quantity }];
-    });
+    case REMOVE_FROM_CART:
+      return prevCart.filter(
+        (item) => item.productId !== action.payload.productId
+      );
+    case CLEAR_CART:
+      return [];
+    default:
+      return prevCart;
+  }
+};
+
+export const CartProvider = ({ children }) => {
+  const initialCartState = (() => {
+    try {
+      const storedCart = localStorage.getItem("cart");
+      return storedCart ? JSON.parse(storedCart) : [];
+    } catch (error) {
+      console.error("Failed to parse cart from localStorage:", error);
+      return [];
+    }
+  })();
+
+  const [cart, dispatch] = useReducer(cartReducer, initialCartState);
+
+  // Save cart to localStorage whenever it changes
+  useEffect(() => {
+    try {
+      localStorage.setItem("cart", JSON.stringify(cart));
+    } catch (error) {
+      console.error("Failed to save cart to localStorage:", error);
+    }
+  }, [cart]);
+
+  const addProduct = (product, quantity) => {
+    dispatch({ type: ADD_TO_CART, payload: { product, quantity } });
   };
 
-  // Remove product from the cart
   const removeProduct = (productId) => {
-    setCart((prevCart) =>
-      prevCart.filter((item) => item.productId !== productId)
-    );
+    dispatch({ type: REMOVE_FROM_CART, payload: { productId } });
   };
 
-  // Accumulate total quantity of items in the cart
+  const clearCart = () => {
+    dispatch({ type: CLEAR_CART });
+  };
+
+  // Calculate total quantity
   const totalQuantity = cart.reduce((acc, item) => acc + item.quantity, 0);
 
   return (
-    <CartContext value={{ cart, addProduct, removeProduct, totalQuantity }}>
+    <CartContext
+      value={{ cart, addProduct, removeProduct, clearCart, totalQuantity }}
+    >
       {children}
     </CartContext>
   );
