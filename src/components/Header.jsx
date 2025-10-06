@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faTags,
   faUser,
+  faUserLargeSlash,
   faShoppingBasket,
   faSun,
   faMoon,
 } from "@fortawesome/free-solid-svg-icons";
 import { useCart } from "../store/cart-context";
+import { useAuth } from "../store/auth-context";
+import { toast } from "react-toastify";
 
 export default function Header() {
   const [theme, setTheme] = useState(() => {
@@ -16,6 +19,8 @@ export default function Header() {
   });
 
   const { totalQuantity } = useCart();
+  const { isAuthenticated, logout } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (theme === "dark") {
@@ -31,6 +36,13 @@ export default function Header() {
       localStorage.setItem("theme", theme);
       return theme;
     });
+  };
+
+  const handleLogout = (e) => {
+    e.preventDefault();
+    logout();
+    toast.success("Logged out successfully!");
+    navigate("/home");
   };
 
   const navLinkClass =
@@ -86,16 +98,32 @@ export default function Header() {
               </NavLink>
             </li>
             <li>
-              <NavLink to="/login" className={({ isActive }) =>
-                  isActive ? `fa-lg ${navLinkIconClass}` : navLinkIconClass
-                }>
-                <FontAwesomeIcon icon={faUser} />
-              </NavLink>
+              {isAuthenticated ? (
+                <NavLink
+                  to="/home"
+                  onClick={handleLogout}
+                  className={navLinkIconClass}
+                >
+                  <FontAwesomeIcon icon={faUserLargeSlash} />
+                </NavLink>
+              ) : (
+                <NavLink
+                  to="/login"
+                  className={({ isActive }) =>
+                    isActive ? `fa-lg ${navLinkIconClass}` : navLinkIconClass
+                  }
+                >
+                  <FontAwesomeIcon icon={faUser} />
+                </NavLink>
+              )}
             </li>
             <li>
-              <NavLink to="/cart" className={({ isActive }) =>
+              <NavLink
+                to="/cart"
+                className={({ isActive }) =>
                   isActive ? ` fa-lg ${navLinkIconClass}` : navLinkIconClass
-                }>
+                }
+              >
                 <FontAwesomeIcon
                   icon={faShoppingBasket}
                   className="text-primary dark:text-light w-6"
