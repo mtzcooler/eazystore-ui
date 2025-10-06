@@ -20,6 +20,9 @@ import {
 import { productsLoader } from "./components/Home.jsx";
 import { contactAction } from "./components/Contact.jsx";
 import { CartProvider } from "./store/cart-context.jsx";
+import { AuthProvider } from "./store/auth-context.jsx";
+import Checkout from "./components/Checkout.jsx";
+import ProtectedRoute from "./components/ProtectedRoute.jsx";
 
 const routeDefinitions = createRoutesFromElements(
   <Route path="/" element={<App />} errorElement={<ErrorPage />}>
@@ -30,6 +33,9 @@ const routeDefinitions = createRoutesFromElements(
     <Route path="/login" element={<Login />} action={loginAction} />
     <Route path="/cart" element={<Cart />} />
     <Route path="/products/:productId" element={<ProductDetail />} />
+    <Route element={<ProtectedRoute />}>
+      <Route path="/checkout" element={<Checkout />} />
+    </Route>
   </Route>
 );
 
@@ -37,9 +43,11 @@ const appRouter = createBrowserRouter(routeDefinitions);
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <CartProvider>
-      <RouterProvider router={appRouter} />
-    </CartProvider>
+    <AuthProvider>
+      <CartProvider>
+        <RouterProvider router={appRouter} />
+      </CartProvider>
+    </AuthProvider>
     <ToastContainer
       position="top-right"
       autoClose={3000}
